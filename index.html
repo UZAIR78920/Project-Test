@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Class Scheduler - Higher Education</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #4a6741 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .auth-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .login-form {
+            display: inline-block;
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e1e5e9;
+        }
+
+        .tab {
+            padding: 15px 30px;
+            cursor: pointer;
+            background: #f8f9fa;
+            margin-right: 5px;
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 5px solid #667eea;
+        }
+
+        .card h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .timetable {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        .timetable table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .timetable th, .timetable td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #e1e5e9;
+        }
+
+        .timetable th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .timetable td {
+            background: #f8f9fa;
+        }
+
+        .class-slot {
+            background: #28a745;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin: 2px 0;
+        }
+
+        .optimization-results {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 5px solid #28a745;
+        }
+
+        .suggestions {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 5px solid #ffc107;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .data-list {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .data-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Smart Class Scheduler</h1>
+            <p>Intelligent Timetable Generation for Higher Education Institutions</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Authentication Section -->
+            <div id="auth-section" class="auth-section">
+                <div class="login-form">
+                    <h2>Administrative Access</h2>
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" placeholder="Enter username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" placeholder="Enter password">
+                    </div>
+                    <button class="btn" onclick="login()">Login</button>
+                </div>
+            </div>
+
+            <!-- Main Dashboard (Hidden until login) -->
+            <div id="dashboard" class="hidden">
+                <div class="tabs">
+                    <div class="tab active" onclick="showTab('data-input')">Data Input</div>
+                    <div class="tab" onclick="showTab('schedule-generation')">Generate Schedule</div>
+                    <div class="tab" onclick="showTab('view-timetables')">View Timetables</div>
+                    <div class="tab" onclick="showTab('reports')">Reports</div>
+                </div>
+
+                <!-- Data Input Tab -->
+                <div id="data-input" class="tab-content active">
+                    <div class="grid">
+                        <div class="card">
+                            <h3>🏢 Infrastructure</h3>
+                            <div class="form-group">
+                                <label for="classrooms">Number of Classrooms:</label>
+                                <input type="number" id="classrooms" min="1" max="50" value="10">
+                            </div>
+                            <div class="form-group">
+                                <label for="laboratories">Number of Laboratories:</label>
+                                <input type="number" id="laboratories" min="0" max="20" value="5">
+                            </div>
+                            <div class="form-group">
+                                <label for="classroom-capacity">Average Classroom Capacity:</label>
+                                <input type="number" id="classroom-capacity" min="20" max="200" value="60">
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3>👥 Student Information</h3>
+                            <div class="form-group">
+                                <label for="departments">Number of Departments:</label>
+                                <input type="number" id="departments" min="1" max="20" value="5">
+                            </div>
+                            <div class="form-group">
+                                <label for="batches">Number of Student Batches:</label>
+                                <input type="number" id="batches" min="1" max="50" value="15">
+                            </div>
+                            <div class="form-group">
+                                <label for="batch-size">Average Batch Size:</label>
+                                <input type="number" id="batch-size" min="20" max="100" value="45">
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3>📚 Academic Structure</h3>
+                            <div class="form-group">
+                                <label for="subjects">Number of Subjects:</label>
+                                <input type="number" id="subjects" min="5" max="100" value="25">
+                            </div>
+                            <div class="form-group">
+                                <label for="max-classes-day">Max Classes per Day:</label>
+                                <input type="number" id="max-classes-day" min="4" max="10" value="8">
+                            </div>
+                            <div class="form-group">
+                                <label for="days-week">Working Days per Week:</label>
+                                <select id="days-week">
+                                    <option value="5">5 Days</option>
+                                    <option value="6" selected>6 Days</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3>👨‍🏫 Faculty Information</h3>
+                            <div class="form-group">
+                                <label for="faculty-count">Number of Faculty:</label>
+                                <input type="number" id="faculty-count" min="5" max="100" value="30">
+                            </div>
+                            <div class="form-group">
+                                <label for="avg-leaves">Average Leaves per Month:</label>
+                                <input type="number" id="avg-leaves" min="1" max="10" value="2">
+                            </div>
+                            <div class="form-group">
+                                <label for="max-load">Max Teaching Hours per Day:</label>
+                                <input type="number" id="max-load" min="4" max="8" value="6">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>📋 Subject Details</h3>
+                        <div class="form-group">
+                            <label for="subject-list">Subject Names (one per line):</label>
+                            <textarea id="subject-list" rows="8" placeholder="Mathematics
+Physics
+Chemistry
+Computer Science
+English
+History
+Economics
+Biology">Mathematics
+Physics
+Chemistry
+Computer Science
+English
+History
+Economics
+Biology</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="classes-per-week">Classes per Week per Subject:</label>
+                            <input type="number" id="classes-per-week" min="1" max="10" value="4">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-secondary" onclick="saveData()">Save Configuration</button>
+                </div>
+
+                <!-- Schedule Generation Tab -->
+                <div id="schedule-generation" class="tab-content">
+                    <div class="card">
+                        <h3>🚀 Generate Optimized Timetables</h3>
+                        <p>Click below to generate multiple optimized timetable options based on your configuration.</p>
+                        <br>
+                        <button class="btn" onclick="generateSchedules()">Generate Timetables</button>
+                        <div id="generation-status"></div>
+                    </div>
+
+                    <div id="optimization-results" class="hidden">
+                        <div class="optimization-results">
+                            <h3>✅ Optimization Results</h3>
+                            <div id="optimization-metrics"></div>
+                        </div>
+                        
+                        <div class="suggestions">
+                            <h4>💡 Optimization Suggestions</h4>
+                            <div id="suggestions-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- View Timetables Tab -->
+                <div id="view-timetables" class="tab-content">
+                    <div class="card">
+                        <h3>📅 Generated Timetables</h3>
+                        <div class="form-group">
+                            <label for="timetable-select">Select Timetable Option:</label>
+                            <select id="timetable-select">
+                                <option value="">Select a timetable...</option>
+                            </select>
+                        </div>
+                        <button class="btn" onclick="viewTimetable()">View Selected Timetable</button>
+                        <button class="btn btn-secondary" onclick="approveTimetable()">Approve & Finalize</button>
+                    </div>
+
+                    <div id="timetable-display" class="timetable hidden"></div>
+                </div>
+
+                <!-- Reports Tab -->
+                <div id="reports" class="tab-content">
+                    <div class="grid">
+                        <div class="card">
+                            <h3>📊 Utilization Reports</h3>
+                            <div id="utilization-stats"></div>
+                        </div>
+                        <div class="card">
+                            <h3>👥 Faculty Workload</h3>
+                            <div id="faculty-stats"></div>
+                        </div>
+                        <div class="card">
+                            <h3>🏢 Room Allocation</h3>
+                            <div id="room-stats"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data storage (in a real application, this would be handled by the backend)
+        let scheduleData = {};
+        let generatedTimetables = [];
+        let currentUser = null;
+
+        // Authentication
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Simple authentication (in production, this would be handled securely by backend)
+            if (username === 'admin' && password === 'admin123') {
+                currentUser = username;
+                document.getElementById('auth-section').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                showStatus('Login successful!', 'success');
+            } else {
+                showStatus('Invalid credentials. Try admin/admin123', 'error');
+            }
+        }
+
+        // Tab management
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        // Save configuration data
+        function saveData() {
+            scheduleData = {
+                infrastructure: {
+                    classrooms: parseInt(document.getElementById('classrooms').value),
+                    laboratories: parseInt(document.getElementById('laboratories').value),
+                    classroom_capacity: parseInt(document.getElementById('classroom-capacity').value)
+                },
+                students: {
+                    departments: parseInt(document.getElementById('departments').value),
+                    batches: parseInt(document.getElementById('batches').value),
+                    batch_size: parseInt(document.getElementById('batch-size').value)
+                },
+                academic: {
+                    subjects: parseInt(document.getElementById('subjects').value),
+                    max_classes_day: parseInt(document.getElementById('max-classes-day').value),
+                    days_week: parseInt(document.getElementById('days-week').value),
+                    classes_per_week: parseInt(document.getElementById('classes-per-week').value)
+                },
+                faculty: {
+                    count: parseInt(document.getElementById('faculty-count').value),
+                    avg_leaves: parseInt(document.getElementById('avg-leaves').value),
+                    max_load: parseInt(document.getElementById('max-load').value)
+                },
+                subject_list: document.getElementById('subject-list').value.split('\n').filter(s => s.trim())
+            };
+            
+            showStatus('Configuration saved successfully!', 'success');
+        }
+
+        // Generate optimized schedules
+        function generateSchedules() {
+            if (Object.keys(scheduleData).length === 0) {
+                showStatus('Please save configuration data first!', 'error');
+                return;
+            }
+
+            document.getElementById('generation-status').innerHTML = '<div class="status-message">⏳ Generating optimized timetables... This may take a few moments.</div>';
+            
+            // Simulate schedule generation with optimization
+            setTimeout(() => {
+                generateMockTimetables();
+                showOptimizationResults();
+                populateTimetableSelector();
+                document.getElementById('generation-status').innerHTML = '<div class="status-message status-success">✅ Successfully generated 3 optimized timetable options!</div>';
+            }, 3000);
+        }
+
+        // Generate mock timetables for demonstration
+        function generateMockTimetables() {
+            const subjects = scheduleData.subject_list || ['Math', 'Physics', 'Chemistry', 'CS', 'English'];
+            const timeSlots = ['9:00-10:00', '10:00-11:00', '11:15-12:15', '12:15-1:15', '2:15-3:15', '3:15-4:15'];
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            
+            generatedTimetables = [];
+            
+            for (let option = 1; option <= 3; option++) {
+                let timetable = {
+                    id: option,
+                    name: `Timetable Option ${option}`,
+                    schedule: {},
+                    metrics: {
+                        classroom_utilization: Math.floor(Math.random() * 20) + 75,
+                        faculty_load_balance: Math.floor(Math.random() * 15) + 80,
+                        conflict_count: Math.floor(Math.random() * 5),
+                        optimization_score: Math.floor(Math.random() * 10) + 85
+                    }
+                };
+                
+                // Generate schedule for each day
+                days.forEach(day => {
+                    timetable.schedule[day] = {};
+                    timeSlots.forEach(slot => {
+                        if (Math.random() > 0.3) { // 70% chance of having a class
+                            const subject = subjects[Math.floor(Math.random() * subjects.length)];
+                            const room = `Room ${Math.floor(Math.random() * scheduleData.infrastructure.classrooms) + 1}`;
+                            const batch = `Batch ${Math.floor(Math.random() * scheduleData.students.batches) + 1}`;
+                            
+                            timetable.schedule[day][slot] = {
+                                subject: subject,
+                                room: room,
+                                batch: batch,
+                                faculty: `Dr. ${['Smith', 'Johnson', 'Williams', 'Brown', 'Davis'][Math.floor(Math.random() * 5)]}`
+                            };
+                        }
+                    });
+                });
+                
+                generatedTimetables.push(timetable);
+            }
+        }
+
+        // Show optimization results
+        function showOptimizationResults() {
+            const bestOption = generatedTimetables.reduce((best, current) => 
+                current.metrics.optimization_score > best.metrics.optimization_score ? current : best
+            );
+            
+            document.getElementById('optimization-metrics').innerHTML = `
+                <p><strong>Best Option:</strong> ${bestOption.name}</p>
+                <p><strong>Classroom Utilization:</strong> ${bestOption.metrics.classroom_utilization}%</p>
+                <p><strong>Faculty Load Balance:</strong> ${bestOption.metrics.faculty_load_balance}%</p>
+                <p><strong>Conflicts Resolved:</strong> ${bestOption.metrics.conflict_count} remaining</p>
+                <p><strong>Overall Score:</strong> ${bestOption.metrics.optimization_score}/100</p>
+            `;
+            
+            const suggestions = [
+                "Consider adding one more classroom for better utilization",
+                "Faculty workload is well-balanced across all options",
+                "Lab sessions are optimally distributed",
+                "Break timings are well-coordinated"
+            ];
+            
+            document.getElementById('suggestions-list').innerHTML = suggestions.map(s => `<p>• ${s}</p>`).join('');
+            document.getElementById('optimization-results').classList.remove('hidden');
+        }
+
+        // Populate timetable selector
+        function populateTimetableSelector() {
+            const selector = document.getElementById('timetable-select');
+            selector.innerHTML = '<option value="">Select a timetable...</option>';
+            
+            generatedTimetables.forEach(tt => {
+                const option = document.createElement('option');
+                option.value = tt.id;
+                option.textContent = `${tt.name} (Score: ${tt.metrics.optimization_score}/100)`;
+                selector.appendChild(option);
+            });
+        }
+
+        // View selected timetable
+        function viewTimetable() {
+            const selectedId = parseInt(document.getElementById('timetable-select').value);
+            if (!selectedId) {
+                showStatus('Please select a timetable option first!', 'error');
+                return;
+            }
+            
+            const timetable = generatedTimetables.find(tt => tt.id === selectedId);
+            displayTimetable(timetable);
+        }
+
+        // Display timetable
+        function displayTimetable(timetable) {
+            const timeSlots = ['9:00-10:00', '10:00-11:00', '11:15-12:15', '12:15-1:15', '2:15-3:15', '3:15-4:15'];
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            
+            let html = `
+                <h3>${timetable.name}</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            ${days.map(day => `<th>${day}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            timeSlots.forEach(slot => {
+                html += `<tr><td><strong>${slot}</strong></td>`;
+                days.forEach(day => {
+                    const classInfo = timetable.schedule[day][slot];
+                    if (classInfo) {
+                        html += `<td>
+                            <div class="class-slot">
+                                <strong>${classInfo.subject}</strong><br>
+                                ${classInfo.room}<br>
+                                ${classInfo.batch}<br>
+                                <small>${classInfo.faculty}</small>
+                            </div>
+                        </td>`;
+                    } else {
+                        html += '<td>-</td>';
+                    }
+                });
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            
+            document.getElementById('timetable-display').innerHTML = html;
+            document.getElementById('timetable-display').classList.remove('hidden');
+        }
+
+        // Approve timetable
+        function approveTimetable() {
+            const selectedId = parseInt(document.getElementById('timetable-select').value);
+            if (!selectedId) {
+                showStatus('Please select a timetable option first!', 'error');
+                return;
+            }
+            
+            showStatus('Timetable approved and finalized successfully!', 'success');
+            generateReports();
+        }
+
+        // Generate reports
+        function generateReports() {
+            // Utilization stats
+            document.getElementById('utilization-stats').innerHTML = `
+                <div class="data-list">
+                    <div class="data-item"><span>Classroom Utilization</span><span>87%</span></div>
+                    <div class="data-item"><span>Laboratory Utilization</span><span>73%</span></div>
+                    <div class="data-item"><span>Peak Hours Efficiency</span><span>92%</span></div>
+                    <div class="data-item"><span>Off-Peak Utilization</span><span>45%</span></div>
+                </div>
+            `;
+            
+            // Faculty stats
+            document.getElementById('faculty-stats').innerHTML = `
+                <div class="data-list">
+                    <div class="data-item"><span>Average Teaching Hours</span><span>5.2/day</span></div>
+                    <div class="data-item"><span>Workload Distribution</span><span>Balanced</span></div>
+                    <div class="data-item"><span>Faculty Satisfaction</span><span>89%</span></div>
+                    <div class="data-item"><span>Leave Accommodation</span><span>100%</span></div>
+                </div>
+            `;
+            
+            // Room stats
+            document.getElementById('room-stats').innerHTML = `
+                <div class="data-list">
+                    <div class="data-item"><span>Most Used Room</span><span>Room 5 (95%)</span></div>
+                    <div class="data-item"><span>Least Used Room</span><span>Room 8 (67%)</span></div>
+                    <div class="data-item"><span>Lab Utilization</span><span>Lab 1 (88%)</span></div>
+                    <div class="data-item"><span>Capacity Optimization</span><span>93%</span></div>
+                </div>
+            `;
+        }
+
+        // Utility function to show status messages
+        function showStatus(message, type) {
+            const existingStatus = document.querySelector('.status-message');
+            if (existingStatus) {
+                existingStatus.remove();
+            }
+            
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `status-message status-${type}`;
+            statusDiv.textContent = message;
+            
+            // Add to the current active tab
+            const activeTab = document.querySelector('.tab-content.active');
+            activeTab.insertBefore(statusDiv, activeTab.firstChild);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                statusDiv.remove();
+            }, 5000);
+        }
+
+        // Initialize with sample data
+        window.onload = function() {
+            // Set default values are already in HTML
+            console.log('Smart Class Scheduler initialized');
+        };
+    </script>
+</body>
+</html>
