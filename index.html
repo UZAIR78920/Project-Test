@@ -391,6 +391,57 @@ Biology</textarea>
                             <input type="number" id="classes-per-week" min="1" max="10" value="4">
                         </div>
                     </div>
+<!-- Altered -->
+                    <div class="card">
+    <h3>📖 Subject Type</h3>
+    <div class="form-group">
+        <label for="subject-type-list">Subject Type (Theory/Practical) - one per line, same order as subjects:</label>
+        <textarea id="subject-type-list" rows="8" placeholder="Theory
+Practical
+Theory
+Practical
+Theory
+Theory
+Practical
+Theory">Theory
+Practical
+Theory
+Practical
+Theory
+Theory
+Practical
+Theory</textarea>
+    </div>
+</div>
+
+<div class="card">
+    <h3>👨‍🏫 Faculty Assignment</h3>
+    <div class="form-group">
+        <label for="faculty-list">Faculty Names (one per line):</label>
+        <textarea id="faculty-list" rows="6" placeholder="Dr. Smith
+Dr. Johnson
+Dr. Williams
+Dr. Brown
+Dr. Davis">Dr. Smith
+Dr. Johnson
+Dr. Williams
+Dr. Brown
+Dr. Davis</textarea>
+    </div>
+    <div class="form-group">
+        <label for="faculty-subjects">Subjects Each Faculty Can Teach (comma separated, line by line matching faculty order):</label>
+        <textarea id="faculty-subjects" rows="6" placeholder="Mathematics, Physics
+Chemistry, Biology
+Computer Science, English
+History, Economics
+Physics, Chemistry">Mathematics, Physics
+Chemistry, Biology
+Computer Science, English
+History, Economics
+Physics, Chemistry</textarea>
+    </div>
+</div>
+
 
                     <button class="btn btn-secondary" onclick="saveData()">Save Configuration</button>
                 </div>
@@ -516,16 +567,20 @@ Biology</textarea>
                     days_week: parseInt(document.getElementById('days-week').value),
                     classes_per_week: parseInt(document.getElementById('classes-per-week').value)
                 },
+                subject_list: document.getElementById('subject-list').value.split('\n').filter(s => s.trim()),
+                subject_types: document.getElementById('subject-type-list').value.split('\n').map(s => s.trim()),
+                faculty_list: document.getElementById('faculty-list').value.split('\n').map(f => f.trim()),
+                faculty_subjects: document.getElementById('faculty-subjects').value.split('\n').map(line => line.split(',').map(s => s.trim())),
                 faculty: {
                     count: parseInt(document.getElementById('faculty-count').value),
                     avg_leaves: parseInt(document.getElementById('avg-leaves').value),
                     max_load: parseInt(document.getElementById('max-load').value)
-                },
-                subject_list: document.getElementById('subject-list').value.split('\n').filter(s => s.trim())
+                }
             };
-            
+        
             showStatus('Configuration saved successfully!', 'success');
         }
+
 
         // Generate optimized schedules
         function generateSchedules() {
